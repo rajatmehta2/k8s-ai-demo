@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: selector-mismatch-demo
+  namespace: k8s-ai-demo-tests
+  labels:
+    app: selector-mismatch-demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mismatch-helper
+  template:
+    metadata:
+      labels:
+        app: mismatch-helper
+    spec:
+      containers:
+      - name: demo-container
+        image: nginx:alpine
+        ports:
+        - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: selector-mismatch-svc
+  namespace: k8s-ai-demo-tests
+spec:
+  type: ClusterIP
+  selector:
+    app: mismatch-worker # Wrong labels, should be mismatch-helper
+  ports:
+  - name: http
+    port: 80
+    targetPort: 80

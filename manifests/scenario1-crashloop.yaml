@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: crashloop-demo
+  namespace: k8s-ai-demo-tests
+  labels:
+    app: crashloop-demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: crashloop-demo
+  template:
+    metadata:
+      labels:
+        app: crashloop-demo
+    spec:
+      containers:
+      - name: demo-container
+        image: alpine:latest
+        command: ["sh", "-c"]
+        # Fails immediately because database env variable is missing
+        args:
+        - >
+          if [ -z "$DB_HOST" ]; then
+            echo "Error: Missing DB_HOST environment variable!" >&2;
+            exit 1;
+          fi;
+          echo "Database connected to $DB_HOST. Starting server...";
+          sleep 3600;

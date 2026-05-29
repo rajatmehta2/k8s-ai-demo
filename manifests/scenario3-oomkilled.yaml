@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: oomkilled-demo
+  namespace: k8s-ai-demo-tests
+  labels:
+    app: oomkilled-demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: oomkilled-demo
+  template:
+    metadata:
+      labels:
+        app: oomkilled-demo
+    spec:
+      containers:
+      - name: demo-container
+        image: python:3.9-alpine
+        command: ["python", "-c"]
+        args:
+        - >
+          print("Allocating memory...");
+          x = bytearray(50 * 1024 * 1024); # Allocate 50MB
+          print("Allocated 50MB successfully!");
+          import time;
+          time.sleep(3600);
+        resources:
+          limits:
+            memory: "15Mi"

@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: imagepull-demo
+  namespace: k8s-ai-demo-tests
+  labels:
+    app: imagepull-demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: imagepull-demo
+  template:
+    metadata:
+      labels:
+        app: imagepull-demo
+    spec:
+      containers:
+      - name: demo-container
+        image: nginx:wrongtag-nonexistent-1234
+        ports:
+        - containerPort: 80
